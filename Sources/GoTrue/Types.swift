@@ -178,6 +178,7 @@ public struct User: Codable, Hashable, Identifiable, Sendable {
   public var role: String?
   public var updatedAt: Date
   public var identities: [UserIdentity]?
+  public var factors: [Factor]?
 
   public init(
     id: UUID,
@@ -199,7 +200,8 @@ public struct User: Codable, Hashable, Identifiable, Sendable {
     lastSignInAt: Date? = nil,
     role: String? = nil,
     updatedAt: Date,
-    identities: [UserIdentity]? = nil
+    identities: [UserIdentity]? = nil,
+    factors: [Factor]? = nil
   ) {
     self.id = id
     self.appMetadata = appMetadata
@@ -221,6 +223,7 @@ public struct User: Codable, Hashable, Identifiable, Sendable {
     self.role = role
     self.updatedAt = updatedAt
     self.identities = identities
+    self.factors = factors
   }
 
   public enum CodingKeys: String, CodingKey {
@@ -244,6 +247,7 @@ public struct User: Codable, Hashable, Identifiable, Sendable {
     case role
     case updatedAt = "updated_at"
     case identities
+    case factors
   }
 }
 
@@ -296,7 +300,39 @@ public struct UserIdentity: Codable, Hashable, Identifiable, Sendable {
     updatedAt = try container.decode(Date.self, forKey: .updatedAt)
   }
 }
+public struct Factor: Codable, Hashable, Identifiable, Sendable  {
+    public var id, createdAt, updatedAt, status: String?
+    public var factorType: String?
 
+    public init(
+      id: String,
+      createdAt: String,
+      updatedAt: String,
+      status: String,
+      factorType: String
+    ) {
+      self.id = id
+      self.createdAt = createdAt
+      self.updatedAt = updatedAt
+      self.status = status
+      self.factorType = factorType
+    }
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
+        updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        status = try container.decode(String.self, forKey: .status)
+        factorType = try container.decode(String.self, forKey: .factorType)
+    }
+    enum CodingKeys: String, CodingKey {
+        case id
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case status
+        case factorType = "factor_type"
+    }
+}
 public enum Provider: String, Codable, CaseIterable, Sendable {
   case apple
   case azure
